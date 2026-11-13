@@ -9,7 +9,7 @@ def add_expenses(file, amount, category, description):
         with open(file, 'r') as f:
             content=json.load(f)
             id=content[-1]['id']+1                      #getting the id for the next expense
-    except FileNotFoundError or IndexError:
+    except (FileNotFoundError, IndexError, json.JSONDecodeError):
         id=1
         content=[]        
 
@@ -27,12 +27,10 @@ def add_expenses(file, amount, category, description):
     print('Successfully added!')
 
 #clearing the data from the 'expenses file
-
 def clear(file):
     with open(file, 'w') as f:
         pass
     print('File cleaned successfully!')
-
 
 
 #new data
@@ -40,7 +38,7 @@ amount=20
 category='food'
 description='lunch'
 
-# add_expenses('expenses.json', amount, category, description)
+add_expenses('expenses.json', amount, category, description)
 
-
-clear('expenses.json')
+#clearing
+#clear('expenses.json')
