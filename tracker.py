@@ -1,18 +1,32 @@
-"""I started this project on november 13th 2026"""
+"""I started this project on November 13th 2026"""
 
 import json
 
+#clearing the data from the 'expenses file
+def clear(file):
+    with open(file, 'w') as f:
+        json.dump([], f, indent=4)              #to clear dump an empty list
+    print('File cleaned successfully!')
 
-def add_expenses(file, amount, category, description):
+#adding new expenses to the file
+def add_expenses(file, amount, category, description):      
     #checking for the file
     try:  
         with open(file, 'r') as f:
-            content=json.load(f)
+            content=json.load(f)                        #loading the info so that it is not lost when writing 
             id=content[-1]['id']+1                      #getting the id for the next expense
-    except (FileNotFoundError, IndexError, json.JSONDecodeError):
+    
+    #if file doesn't exist or has an emppty list
+    except (FileNotFoundError, IndexError):             
         id=1
-        content=[]        
+        content=[]
 
+    #if the file is damaged
+    except json.JSONDecodeError:
+        print('Your json file is damaged!')
+        return        
+
+    #if all good, add the new info
     with open(file, 'w') as w:
         #adding the new information
         info={
@@ -26,19 +40,86 @@ def add_expenses(file, amount, category, description):
 
     print('Successfully added!')
 
-#clearing the data from the 'expenses file
-def clear(file):
-    with open(file, 'w') as f:
-        pass
-    print('File cleaned successfully!')
+#listing the data to the console
+def list_expenses(file):
+    try:
+        with open(file, 'r') as f:
+            content=json.load(f)
+            if content==[]:
+                print('The file is empty!')
+                return
+            for expense in content:
+                for type in expense:
+                    print(f'{type.capitalize()}: {expense[type]}')
+                print()
+            
 
+    except FileNotFoundError:
+        print('File not found!')
+    except json.JSONDecodeError:
+        print('JSON File is damaged!')
+    
+def delete_expense(file, id):
+    try:
+        id =int(id)
+    except ValueError:
+        print('ID must be an integer: ')
+        return
+    try:
+        with open(file, 'r') as f:
+            content=json.load(f)
+            new_content=[]
+            for expense in content:
+                if expense['id']==id:
+                    continue
+                new_content.append(expense)
 
-#new data
-amount=20
-category='food'
-description='lunch'
+    except FileNotFoundError:
+        print('File was not found!')
+        return
+    except json.JSONDecodeError:
+        print('File is damaged!')
+        return
+    with open(file, 'w') as w:
+        json.dump(new_content, w, indent=4)
+        if len(new_content)==len(content):
+            print('Expense with the given id was not found!')
+        else:
+            print('Deleted successfully!')
 
-add_expenses('expenses.json', amount, category, description)
+#testing 
+#variables
+file='expenses.json'
+condition=1
 
-#clearing
-#clear('expenses.json')
+while condition==1:
+    operation=int(input('What would you like to do? '))
+    print()
+    match operation:
+        case 1:
+            while True:
+                try:
+                    amount=int(input('Enter the amount: '))
+                    break
+                except ValueError:
+                    print('Amount should only be interger!')
+
+            category=input('Define the category: ')
+            description=input('Porvide some description: ')
+            add_expenses('expenses.json', amount, category, description)
+        case 2:
+            list_expenses(file)
+        case 3:
+            id=input('Enter the id for the expense you want to delete: ')
+            delete_expense(file, id)
+        case 0:
+            clear(file)
+        case _:
+            print('Invalid command!')
+    condition=input('\nWould you like to continue? 1 for YES, anything else for NO: ')
+    print('\n')
+    try:
+        condition=int(condition)
+    except ValueError:
+        continue
+    
