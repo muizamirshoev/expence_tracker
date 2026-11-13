@@ -58,7 +58,8 @@ def list_expenses(file):
         print('File not found!')
     except json.JSONDecodeError:
         print('JSON File is damaged!')
-    
+
+#deleting expense with the given id  
 def delete_expense(file, id):
     try:
         id =int(id)
@@ -92,10 +93,12 @@ def delete_expense(file, id):
 file='expenses.json'
 condition=1
 
-while condition==1:
+#loop for testing different functions
+while condition!=1:
     operation=int(input('What would you like to do? '))
     print()
     match operation:
+        #case for adding expenses
         case 1:
             while True:
                 try:
@@ -107,16 +110,24 @@ while condition==1:
             category=input('Define the category: ')
             description=input('Porvide some description: ')
             add_expenses('expenses.json', amount, category, description)
+
+        #case for listing expenses
         case 2:
             list_expenses(file)
+        
+        #case for deleting expense using id
         case 3:
             id=input('Enter the id for the expense you want to delete: ')
             delete_expense(file, id)
+        
+        #case for cleaering
         case 0:
             clear(file)
+        
+        #case for exiting the loop
         case _:
-            print('Invalid command!')
-    condition=input('\nWould you like to continue? 1 for YES, anything else for NO: ')
+            condition=input('\nWould you like to exit? 1 for YES, anything else for NO: ')
+    
     print('\n')
     try:
         condition=int(condition)
