@@ -91,11 +91,16 @@ def delete_expense(file, id):
 #testing 
 #variables
 file='expenses.json'
-condition=1
+condition=0
 
 #loop for testing different functions
 while condition!=1:
-    operation=int(input('What would you like to do? '))
+    operation=input('What would you like to do? ')
+    try:
+        operation=int(operation)
+    except ValueError:
+        pass
+        
     print()
     match operation:
         #case for adding expenses
