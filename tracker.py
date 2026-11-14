@@ -2,6 +2,9 @@
 
 import json
 
+class InvalidExpenseError(Exception):
+    pass
+
 class expense_tracker:
     def __init__(self, file):
         self.file = file
@@ -87,8 +90,6 @@ class expense_tracker:
             else:
                 print('Deleted successfully!')
 
-#testing 
-#variables
 file='expenses.json'
 condition=0
 
@@ -110,11 +111,19 @@ while condition!=1:
             while True:
                 try:
                     amount=int(input('Enter the amount: '))
+                    if amount<=0:
+                        raise InvalidExpenseError('The expense must  be greater than 0!')
                     break
                 except ValueError:
                     print('Amount should only be interger!')
-
-            category=input('Define the category: ')
+                except InvalidExpenseError as e:
+                    print(e)
+            while True:
+                category=input('Define the category: ')
+                if len(category)==0:
+                    print('Category is a mandatory field!')
+                else:
+                    break
             description=input('Porvide some description: ')
             tracker.add_expenses(amount, category, description)
 
